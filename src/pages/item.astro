@@ -346,11 +346,13 @@ import Textarea from "@/components/starwind/textarea/Textarea.astro";
     try {
       const item = await fetchListing(id);
 
-      // Increment view count once per session, never for the seller
+      // Increment view count once per 10 minutes per listing, never for the seller
       const viewKey = `viewed_${id}`;
-      if (currentUserId !== item.user_id && !sessionStorage.getItem(viewKey)) {
-        sessionStorage.setItem(viewKey, "1");
-        incrementViewCount(id, item.view_count ?? 0, item.daily_views ?? 0);
+      const lastViewed = localStorage.getItem(viewKey);
+      const tenMinutesAgo = Date.now() - 10 * 60 * 1000;
+      if (currentUserId !== item.user_id && (!lastViewed || parseInt(lastViewed) < tenMinutesAgo)) {
+        localStorage.setItem(viewKey, Date.now().toString());
+        incrementViewCount(id);
       }
 
       // Breadcrumb

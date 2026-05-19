@@ -107,8 +107,8 @@ export async function fetchListing(id: string) {
   return data as Listing;
 }
 
-export async function incrementViewCount(listingId: string, currentCount: number, currentDailyViews: number): Promise<void> {
-  await supabase.from("listings").update({ view_count: currentCount + 1, daily_views: currentDailyViews + 1 }).eq("id", listingId);
+export async function incrementViewCount(listingId: string): Promise<void> {
+  await supabase.rpc("increment_view_count", { listing_id: listingId });
 }
 
 export async function fetchUserListings(userId: string) {
